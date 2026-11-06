@@ -3,8 +3,7 @@
    TYPING QUEST v1.0
 ========================================= */
 
-// ★ Apps Scriptを公開したら、このURLを書き換える
-const API_URL = "ここにApps ScriptのウェブアプリURL";
+const API_URL = "https://script.google.com/macros/s/AKfycbwe3xTtSYlpDsLcvE0Uh9LuIOFxs4P0SVWs2gRqeSm8XuUEiRMeKLgIl8p5-ooRvYZ8LA/exec";
 
 const $ = id => document.getElementById(id);
 
