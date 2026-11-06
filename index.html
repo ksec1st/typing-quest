@@ -1,0 +1,208 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101820">
+  <meta name="description" content="TYPING QUEST - タイピングでモンスターを討伐するRPG">
+  <title>TYPING QUEST</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+
+    <!-- タイトル画面 -->
+    <section id="title-screen" class="screen active">
+      <div class="title-background"></div>
+      <div class="title-content">
+        <div class="pixel-emblem">⚔</div>
+        <p class="eyebrow">A FANTASY TYPING RPG</p>
+        <h1>TYPING<br><span>QUEST</span></h1>
+        <p class="title-sub">TYPE YOUR WAY TO VICTORY.</p>
+        <div class="title-buttons">
+          <button class="main-button" id="start-button">NEW ADVENTURE</button>
+          <button class="sub-button" id="continue-button">CONTINUE</button>
+        </div>
+        <p class="version">VERSION 1.0.0</p>
+      </div>
+    </section>
+
+    <!-- プレイヤー登録 -->
+    <section id="register-screen" class="screen">
+      <div class="panel register-panel">
+        <p class="eyebrow">PLAYER REGISTRATION</p>
+        <h2>冒険者登録</h2>
+        <p class="muted">あなたの冒険者データを登録しよう。</p>
+        <label>プレイヤー名</label>
+        <input id="player-name" maxlength="12" placeholder="冒険者の名前">
+        <label>パスワード（4文字以上）</label>
+        <input id="player-pin" type="password" minlength="4" maxlength="30" placeholder="パスワード">
+        <button class="main-button full" id="register-button">冒険を始める</button>
+        <button class="text-button" id="back-title">タイトルへ戻る</button>
+        <p id="register-message" class="message"></p>
+      </div>
+    </section>
+
+    <!-- ログイン -->
+    <section id="login-screen" class="screen">
+      <div class="panel register-panel">
+        <p class="eyebrow">CONTINUE ADVENTURE</p>
+        <h2>冒険を再開</h2>
+        <label>プレイヤー名</label>
+        <input id="login-name" maxlength="12" placeholder="冒険者の名前">
+        <label>パスワード</label>
+        <input id="login-pin" type="password" placeholder="パスワード">
+        <button class="main-button full" id="login-button">ログイン</button>
+        <button class="text-button" id="back-title-login">戻る</button>
+        <p id="login-message" class="message"></p>
+      </div>
+    </section>
+
+    <!-- メイン画面 -->
+    <section id="game-screen" class="screen">
+      <header class="game-header">
+        <div class="brand">⚔ TYPING QUEST</div>
+        <div class="header-right">
+          <span id="connection-status">● ONLINE</span>
+          <button id="save-button" class="small-button">SAVE</button>
+        </div>
+      </header>
+
+      <main class="game-layout">
+        <aside class="sidebar">
+          <div class="player-card">
+            <div class="avatar">🛡️</div>
+            <p class="muted small">ADVENTURER</p>
+            <h3 id="display-name">PLAYER</h3>
+            <div class="level-text">LEVEL <strong id="player-level">1</strong></div>
+            <div class="bar-label"><span>EXP</span><span id="exp-label">0 / 100</span></div>
+            <div class="bar"><div id="exp-bar" class="exp-fill"></div></div>
+            <div class="bar-label"><span>HP</span><span id="hp-label">100 / 100</span></div>
+            <div class="bar"><div id="player-hp-bar" class="hp-fill"></div></div>
+          </div>
+
+          <div class="side-panel">
+            <h3>STATUS</h3>
+            <div class="stat-line"><span>攻撃力</span><strong id="attack-stat">1</strong></div>
+            <div class="stat-line"><span>ゴールド</span><strong id="gold-stat">0 G</strong></div>
+            <div class="stat-line"><span>総討伐数</span><strong id="kill-stat">0</strong></div>
+          </div>
+
+          <div class="side-panel">
+            <h3>ADVENTURE</h3>
+            <div class="location">🌿 はじまりの草原</div>
+            <p class="muted small">AREA 01 / GRASSLAND</p>
+            <div class="stat-line"><span>現在の敵</span><strong id="enemy-count">1体目</strong></div>
+          </div>
+
+          <button id="logout-button" class="logout-button">ログアウト</button>
+        </aside>
+
+        <section class="battle-area">
+          <div class="area-heading">
+            <div>
+              <p class="eyebrow">AREA 01</p>
+              <h2>はじまりの草原</h2>
+            </div>
+            <span class="area-tag">BEGINNER</span>
+          </div>
+
+          <div class="battle-scene">
+            <div class="scene-sky"></div>
+            <div class="scene-sun"></div>
+            <div class="cloud cloud-one"></div>
+            <div class="cloud cloud-two"></div>
+            <div class="scene-ground"></div>
+            <div class="grass grass-one">🌱</div>
+            <div class="grass grass-two">🌿</div>
+
+            <div class="enemy-unit" id="enemy-unit">
+              <div class="enemy-sprite" id="enemy-sprite">🟢</div>
+              <div class="enemy-name" id="enemy-name">スライム</div>
+              <div class="enemy-level">Lv.<span id="enemy-level">1</span></div>
+              <div class="enemy-hp-label"><span>HP</span><span id="enemy-hp-label">50 / 50</span></div>
+              <div class="enemy-hp"><div id="enemy-hp-bar"></div></div>
+              <div id="damage-number" class="damage-number"></div>
+            </div>
+
+            <div class="hero-unit" id="hero-unit">
+              <div class="hero-sprite">🧙</div>
+              <div class="hero-label">YOU</div>
+            </div>
+
+            <div id="battle-effect" class="battle-effect"></div>
+          </div>
+
+          <div class="battle-info">
+            <div class="battle-info-item">
+              <span>COMBO</span><strong id="combo-value">0</strong>
+            </div>
+            <div class="battle-info-item">
+              <span>DAMAGE</span><strong id="damage-value">0</strong>
+            </div>
+            <div class="battle-info-item">
+              <span>ACCURACY</span><strong id="accuracy-value">100%</strong>
+            </div>
+            <div class="battle-info-item">
+              <span>SPEED</span><strong id="speed-value">0</strong>
+            </div>
+          </div>
+
+          <div class="typing-panel">
+            <div class="typing-heading">
+              <div>
+                <p class="eyebrow">TYPE TO ATTACK</p>
+                <h3>攻撃ワード</h3>
+              </div>
+              <span id="difficulty-label" class="difficulty">BEGINNER</span>
+            </div>
+
+            <div id="sentence-display" class="sentence-display">今日は楽しくゲームをしよう</div>
+            <div id="romaji-display" class="romaji-display">kyouha tanoshiku ge-mu wo shiyou</div>
+
+            <div class="typing-progress">
+              <div id="typing-progress-bar"></div>
+            </div>
+
+            <input id="typing-input" class="typing-input"
+              type="text" autocomplete="off" autocapitalize="off"
+              spellcheck="false" placeholder="ここにローマ字を入力..." disabled>
+
+            <div class="typing-footer">
+              <span id="typing-hint">敵を出現させて戦闘を開始しよう！</span>
+              <span id="mistake-count">MISS : 0</span>
+            </div>
+          </div>
+
+          <div class="battle-actions">
+            <button id="battle-button" class="main-button">⚔ BATTLE START</button>
+            <button id="next-enemy-button" class="sub-button" disabled>次の敵へ</button>
+          </div>
+        </section>
+      </main>
+    </section>
+
+    <!-- 戦闘結果 -->
+    <div id="result-modal" class="modal">
+      <div class="modal-content">
+        <p class="eyebrow">BATTLE RESULT</p>
+        <h2 id="result-title">VICTORY!</h2>
+        <div class="result-monster">🏆</div>
+        <div class="result-grid">
+          <div><span>EXP</span><strong id="result-exp">+20</strong></div>
+          <div><span>GOLD</span><strong id="result-gold">+10</strong></div>
+          <div><span>ACCURACY</span><strong id="result-accuracy">100%</strong></div>
+          <div><span>MAX COMBO</span><strong id="result-combo">0</strong></div>
+        </div>
+        <p id="result-message" class="muted"></p>
+        <button id="result-close" class="main-button full">CONTINUE</button>
+      </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
