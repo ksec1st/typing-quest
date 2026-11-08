@@ -318,7 +318,7 @@ function selectSentence() {
   $("difficulty-label").textContent =
     ["BEGINNER", "NORMAL", "ADVANCED", "EXPERT"][difficulty];
   $("sentence-display").textContent = currentSentence.jp;
-  $("romaji-display").textContent = currentSentence.ro;
+  typed = ""; updateTypingDisplay();
 }
 
 // ---------- 戦闘開始 ----------
@@ -347,93 +347,104 @@ $("battle-button").onclick = () => {
   }, 1000);
 };
 
-// ---------- タイピング処理 ----------
+
+/* ---------- タイピング処理 修正版 ---------- */
+
+function getTypingTarget() {
+  return currentSentence.ro.replace(/\s/g, "");
+}
+
+function updateTypingDisplay() {
+  const target = getTypingTarget();
+
+  $("romaji-display").innerHTML = `
+    <span style="color:#78d69a">${target.slice(0, typed.length)}</span><span style="color:#ffffff">${target.slice(typed.length)}</span>
+  `;
+
+  $("typing-progress-bar").style.width =
+    (typed.length / target.length * 100) + "%";
+}
 
 $("typing-input").addEventListener("input", event => {
   if (!battleStarted || battleFinished) return;
 
-  let value = event.target.value.toLowerCase().replace(/[^a-z]/g, "");
+  const target = getTypingTarget();
 
+  // 入力値をローマ字のみに統一
+  const value = event.target.value.toLowerCase().replace(/[^a-z]/g, "");
+
+  // 既に入力した文字を消せないようにする
   if (value.length < typed.length) {
     event.target.value = typed;
     return;
   }
 
-  if (value === typed) return;
-
-  const expected = currentSentence.ro.slice(0, value.length);
-
-  if (value !== expected) {
+  // 正しい入力か確認
+  if (!target.startsWith(value)) {
     battleMiss++;
     player.totalMiss++;
     combo = 0;
+
     event.target.value = typed;
+
     updateBattleUI();
-    $("typing-hint").textContent = "MISS！正しい文字を入力しよう";
+    updateTypingDisplay();
+
+    $("typing-hint").textContent = "MISS！もう一度確認しよう！";
     return;
   }
 
+  // 新しく入力された文字数
   const added = value.length - typed.length;
+
   typed = value;
+
   battleTyped += added;
   player.totalTyped += added;
 
-  const power = attackPower();
-  const damage = added * power;
+  // 攻撃処理
+  const damage = added * attackPower();
 
   enemyHp = Math.max(0, enemyHp - damage);
+
   damageThisBattle += damage;
   player.totalDamage += damage;
+
   combo += added;
   maxCombo = Math.max(maxCombo, combo);
 
   event.target.value = typed;
+
   showDamage(damage);
   updateEnemyUI();
   updateBattleUI();
+  updateTypingDisplay();
   playAttackAnimation();
 
+  // 敵を倒した場合
   if (enemyHp <= 0) {
     victory();
     return;
   }
 
-  if (typed === currentSentence.ro) {
+  // 文章を最後まで入力した場合
+  if (typed.length === target.length) {
     combo += 5;
     maxCombo = Math.max(maxCombo, combo);
+
     typed = "";
     $("typing-input").value = "";
+
     selectSentence();
-    $("typing-hint").textContent = "文章クリア！次の文章へ！";
+
+    $("typing-hint").textContent =
+      "文章クリア！次の文章へ！";
+
+    updateTypingDisplay();
     updateBattleUI();
   }
 });
 
-function showDamage(value) {
-  const el = $("damage-number");
-  el.textContent = "-" + value;
-  el.classList.remove("show");
-  void el.offsetWidth;
-  el.classList.add("show");
-}
-
-function playAttackAnimation() {
-  $("enemy-unit").classList.remove("hit");
-  $("hero-unit").classList.remove("attack");
-  void $("enemy-unit").offsetWidth;
-  $("enemy-unit").classList.add("hit");
-  $("hero-unit").classList.add("attack");
-  $("battle-effect").classList.remove("flash");
-  void $("battle-effect").offsetWidth;
-  $("battle-effect").classList.add("flash");
-}
-
-function updateEnemyUI() {
-  $("enemy-hp-bar").style.width =
-    Math.max(0, enemyHp / enemyMaxHp * 100) + "%";
-  $("enemy-hp-label").textContent =
-    `${enemyHp} / ${enemyMaxHp}`;
-}
 
 // ---------- 敵の反撃 ----------
 
